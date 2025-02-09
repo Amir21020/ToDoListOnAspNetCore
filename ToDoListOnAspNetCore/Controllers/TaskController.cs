@@ -31,4 +31,15 @@ public class TaskController
         var response = await taskService.GetTasks(filter);
         return Json(new {data = response.Data});
     }
+
+    [HttpPost]
+    public async Task<IActionResult> EndTask(long id)
+    {
+        var response = await taskService.EndTask(id);
+        if(response.StatusCode == ToDoList.Domain.Enum.StatusCode.Ok)
+        {
+            return Ok(new { description = response.Description });
+        }
+        return BadRequest(new { description = response.Description });
+    }
 }

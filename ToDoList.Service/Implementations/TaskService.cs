@@ -63,11 +63,47 @@ public sealed class TaskService
         }
     }
 
+    public async Task<IBaseResponse<bool>> EndTask(long id)
+    {
+        try
+        {
+            var task = await taskRepository.GetAll().FirstOrDefaultAsync(x => x.Id == id);
+            if(task is null)
+            {
+                return new BaseResponse<bool>
+                {
+                    StatusCode = Domain.Enum.StatusCode.TaskNotFound,
+                    Description = "Задача не найдена"
+                };
+            }
+
+            task.IsDone = true;
+
+            await taskRepository.Update(task);
+
+            return new BaseResponse<bool>
+            {
+                Description = "Задача завершена",
+                StatusCode = Domain.Enum.StatusCode.Ok
+            };
+        }
+        catch(Exception ex )
+        {
+            logger.LogError(ex, $"[TaskService.EndTask]: {ex.Message}");
+            return new BaseResponse<bool>
+            {
+                Description = $"{ex.Message }",
+                StatusCode = Domain.Enum.StatusCode.InternalServerError
+            };
+        }
+    }
+
     public async Task<IBaseResponse<IEnumerable<TaskViewModel>>> GetTasks(TaskFilter filter)
     {
         try
         {
             var tasks = await taskRepository.GetAll()
+                .Where(x => !x.IsDone)
                 .WhereIf(!string.IsNullOrWhiteSpace(filter.Name), 
                 x => x.Name == filter.Name)
                 .WhereIf(filter.Priority.HasValue,x => x.Priority == filter.Priority)
