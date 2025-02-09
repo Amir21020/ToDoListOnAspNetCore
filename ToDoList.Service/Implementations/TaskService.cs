@@ -17,6 +17,7 @@ public sealed class TaskService
     {
         try
         {
+            model.Validate();
             logger.LogInformation($"Запрос на создание задачи - {model.Name}");
             var task = await taskRepository.GetAll()
                 .Where(x => x.Created.Date == DateTime.Today)
@@ -55,7 +56,7 @@ public sealed class TaskService
             return new BaseResponse<TaskEntity>
             {
                 StatusCode = Domain.Enum.StatusCode.InternalServerError,
-
+                Description = ex.Message
             };
         }
     }
