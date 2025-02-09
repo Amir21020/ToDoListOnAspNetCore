@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using ToDoList.DAL.Interfaces;
 using ToDoList.Domain.Enity;
 using ToDoList.Domain.Extensions;
+using ToDoList.Domain.Filters.Task;
 using ToDoList.Domain.Response;
 using ToDoList.Domain.ViewModels.Task;
 using ToDoList.Service.Interfaces;
@@ -62,11 +63,14 @@ public sealed class TaskService
         }
     }
 
-    public async Task<IBaseResponse<IEnumerable<TaskViewModel>>> GetTasks()
+    public async Task<IBaseResponse<IEnumerable<TaskViewModel>>> GetTasks(TaskFilter filter)
     {
         try
         {
             var tasks = await taskRepository.GetAll()
+                .WhereIf(!string.IsNullOrWhiteSpace(filter.Name), 
+                x => x.Name == filter.Name)
+                .WhereIf(filter.Priority.HasValue,x => x.Priority == filter.Priority)
                 .Select(x => new TaskViewModel
                 {
                     Name = x.Name,
