@@ -5,6 +5,14 @@ VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToDoListOnAspNetCore", "ToDoListOnAspNetCore\ToDoListOnAspNetCore.csproj", "{A03DFF97-F794-4EA0-AFCA-D0DB0C8EFF02}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{717495C8-108C-4395-8D87-E541133E4682}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToDoList.Domain", "ToDoList.Domain\ToDoList.Domain.csproj", "{0EB68EFC-742D-4AFC-8787-65CDA5FCF975}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DAL", "DAL", "{4A8C9852-4C99-4D64-A7D6-2C6144282F3E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToDoList.DAL", "ToDoList.DAL\ToDoList.DAL.csproj", "{9B27A31D-C9FD-4D73-9CE0-C847A05D15CF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,9 +23,21 @@ Global
 		{A03DFF97-F794-4EA0-AFCA-D0DB0C8EFF02}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A03DFF97-F794-4EA0-AFCA-D0DB0C8EFF02}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A03DFF97-F794-4EA0-AFCA-D0DB0C8EFF02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0EB68EFC-742D-4AFC-8787-65CDA5FCF975}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EB68EFC-742D-4AFC-8787-65CDA5FCF975}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EB68EFC-742D-4AFC-8787-65CDA5FCF975}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EB68EFC-742D-4AFC-8787-65CDA5FCF975}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B27A31D-C9FD-4D73-9CE0-C847A05D15CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B27A31D-C9FD-4D73-9CE0-C847A05D15CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B27A31D-C9FD-4D73-9CE0-C847A05D15CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B27A31D-C9FD-4D73-9CE0-C847A05D15CF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0EB68EFC-742D-4AFC-8787-65CDA5FCF975} = {717495C8-108C-4395-8D87-E541133E4682}
+		{9B27A31D-C9FD-4D73-9CE0-C847A05D15CF} = {4A8C9852-4C99-4D64-A7D6-2C6144282F3E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {07A58D8C-EC97-4A0A-A2CC-A966EE9ECA12}
