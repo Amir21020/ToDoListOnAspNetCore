@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.Json;
 using Microsoft.Extensions.Logging;
+using System.Globalization;
 using ToDoList.DAL.Interfaces;
 using ToDoList.Domain.Enity;
 using ToDoList.Domain.Extensions;
@@ -16,6 +17,39 @@ public sealed class TaskService
     ILogger<TaskService> logger)
     : ITaskService
 {
+    public async Task<IBaseResponse<IEnumerable<TaskViewModel>>> CalculateCompletedTasks()
+    {
+        try
+        {
+            var tasks = await taskRepository.GetAll()
+                .Where(x => x.Created.Date == DateTime.Today)
+                .Select(x => new TaskViewModel
+                {
+                    Name = x.Name,
+                    Description = x.Description,
+                    Priority = x.Priority.ToString(),
+                    Created = x.Created.ToString(CultureInfo.InvariantCulture),
+                    Id = x.Id,
+                    IsDone = x.IsDone == true ? "Готова" : "Не готова"
+                }).ToListAsync();
+
+            return new BaseResponse<IEnumerable<TaskViewModel>>
+            {
+                Data = tasks,
+                StatusCode = Domain.Enum.StatusCode.Ok
+            };
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"[TaskService.CalculateCompletedTasks]: {ex.Message}");
+            return new BaseResponse<IEnumerable<TaskViewModel>>
+            {
+                StatusCode = Domain.Enum.StatusCode.InternalServerError,
+                Description = ex.Message
+            };
+        }
+    }
+
     public async Task<IBaseResponse<TaskEntity>> Create(CreateTaskViewModel model)
     {
         try
