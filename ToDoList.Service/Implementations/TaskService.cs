@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.Json;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
 using ToDoList.DAL.Interfaces;
@@ -145,7 +144,8 @@ public sealed class TaskService
                     Id = x.Id,
                     Name = x.Name,
                     Description = x.Description.Substring(0, 5),
-                }).ToListAsync();
+                })
+                .ToListAsync();
 
             return new BaseResponse<IEnumerable<TaskCompletedViewModel>>
             {
@@ -164,7 +164,7 @@ public sealed class TaskService
         }
     }
 
-    public async Task<IBaseResponse<IEnumerable<TaskViewModel>>> GetTasks(TaskFilter filter)
+    public async Task<DataTableResult> GetTasks(TaskFilter filter)
     {
         try
         {
@@ -181,21 +181,26 @@ public sealed class TaskService
                     Created = x.Created.ToLongDateString(),
                     Id = x.Id,
                     IsDone = x.IsDone == true ? "Готова" : "Не готова"
-                }).ToListAsync();
+                })
+                .Skip(filter.Skip)
+                .Take(filter.PageSize)
+                .ToListAsync();
 
-            return new BaseResponse<IEnumerable<TaskViewModel>>
+            var count = taskRepository.GetAll().Count(x => !x.IsDone);
+
+            return new DataTableResult
             {
                 Data = tasks,
-                StatusCode= Domain.Enum.StatusCode.Ok,
+                Total = count
             };
         }
         catch(Exception ex)
         {
             logger.LogError($"[TaskService.GetTasks]: {ex.Message}");
-            return new BaseResponse<IEnumerable<TaskViewModel>>
+            return new DataTableResult
             {
-                Description = $"{ex.Message}",
-                StatusCode = Domain.Enum.StatusCode.InternalServerError
+                Data = null,
+                Total = 0
             };
         }
     }
