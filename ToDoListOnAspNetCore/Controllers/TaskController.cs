@@ -23,4 +23,11 @@ public class TaskController
         }
         return BadRequest(new { description = response.Description });
     }
+
+    [HttpPost]
+    public async Task<IActionResult> TaskHandler()
+    {
+        var response = await taskService.GetTasks();
+        return Json(new {data = response.Data});
+    }
 }

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using ToDoList.DAL.Interfaces;
 using ToDoList.Domain.Enity;
+using ToDoList.Domain.Extensions;
 using ToDoList.Domain.Response;
 using ToDoList.Domain.ViewModels.Task;
 using ToDoList.Service.Interfaces;
@@ -57,6 +58,38 @@ public sealed class TaskService
             {
                 StatusCode = Domain.Enum.StatusCode.InternalServerError,
                 Description = ex.Message
+            };
+        }
+    }
+
+    public async Task<IBaseResponse<IEnumerable<TaskViewModel>>> GetTasks()
+    {
+        try
+        {
+            var tasks = await taskRepository.GetAll()
+                .Select(x => new TaskViewModel
+                {
+                    Name = x.Name,
+                    Description = x.Description,
+                    Priority = x.Priority.GetDisplayName(),
+                    Created = x.Created.ToLongDateString(),
+                    Id = x.Id,
+                    IsDone = x.IsDone == true ? "Готова" : "Не готова"
+                }).ToListAsync();
+
+            return new BaseResponse<IEnumerable<TaskViewModel>>
+            {
+                Data = tasks,
+                StatusCode= Domain.Enum.StatusCode.Ok,
+            };
+        }
+        catch(Exception ex)
+        {
+            logger.LogError($"[TaskService.GetTasks]: {ex.Message}");
+            return new BaseResponse<IEnumerable<TaskViewModel>>
+            {
+                Description = $"{ex.Message}",
+                StatusCode = Domain.Enum.StatusCode.InternalServerError
             };
         }
     }
