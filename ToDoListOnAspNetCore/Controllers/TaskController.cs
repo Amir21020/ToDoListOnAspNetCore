@@ -42,4 +42,12 @@ public class TaskController
         }
         return BadRequest(new { description = response.Description });
     }
+
+    public async Task<IActionResult> GetCompletedTasks()
+    {
+        var result = await taskService.GetCompletedTasks();
+        return Json( new{ data =  result.Data });
+    }
+
+
 }

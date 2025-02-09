@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.Json;
 using Microsoft.Extensions.Logging;
 using ToDoList.DAL.Interfaces;
 using ToDoList.Domain.Enity;
@@ -94,6 +95,37 @@ public sealed class TaskService
             {
                 Description = $"{ex.Message }",
                 StatusCode = Domain.Enum.StatusCode.InternalServerError
+            };
+        }
+    }
+
+    public async Task<IBaseResponse<IEnumerable<TaskCompletedViewModel>>> GetCompletedTasks()
+    {
+        try
+        {
+            var tasks = await taskRepository.GetAll()
+                .Where(x => x.IsDone)
+                .Where(x => x.Created.Date == DateTime.Today)
+                .Select(x => new TaskCompletedViewModel
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Description = x.Description.Substring(0, 5),
+                }).ToListAsync();
+
+            return new BaseResponse<IEnumerable<TaskCompletedViewModel>>
+            {
+                Data = tasks,
+                StatusCode = Domain.Enum.StatusCode.Ok
+            };
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, $"[TaskService.GetCompletedTasks]: {ex.Message}");
+            return new BaseResponse<IEnumerable<TaskCompletedViewModel>>
+            {
+                Description = $"{ex.Message}",
+                StatusCode = Domain.Enum.StatusCode.InternalServerError,
             };
         }
     }
